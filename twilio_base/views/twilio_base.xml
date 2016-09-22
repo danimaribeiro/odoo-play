@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend" name="trust_base assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="http://media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
+            <script type="text/javascript" src="/twilio_base/static/src/js/twilio_base.js"/>
+            <link rel="stylesheet" href="/twilio_base/static/src/css/twilio.css"/>
+        </xpath>
+    </template>
+
+    <record id="action_home_page" model="ir.actions.client">
+        <field name="name">Abrir dial</field>
+        <field name="tag">twilio_base.open_dialer</field>
+    </record>
+
+    <menuitem id="home_page_petstore_menu" parent="sales_team.menu_sale_config"
+          name="Discar" action="action_home_page"/>
+
+</odoo>
