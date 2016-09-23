@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
 
+    <t t-name="TwilioCallNotification" t-extend="Notification">
+        <t t-jquery=".o_notification_title > t" t-operation="replace">
+            <span  t-attf-class="link2event eid_{{widget.callId}}">
+                <t t-esc="widget.title"/>
+            </span>
+        </t>
+        <t t-jquery=".o_notification_content" t-operation="append">
+            <br/><br/>
+            <button type="button" class="btn btn-success link2showed">
+                <i class="fa fa-phone"></i> Atender
+            </button>
+            <button type="button" class="btn btn-danger link2event pull-right">Rejeitar</button>
+        </t>
+    </t>
+
     <t t-name="twilio_base.phone.dial">
         <div class="col-md-4 col-md-offset-4 phone">
             <div class="row1">

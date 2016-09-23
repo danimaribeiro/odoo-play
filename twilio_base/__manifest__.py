@@ -20,6 +20,7 @@
     ],
     'data': [
         'views/twilio_base.xml',
+        'views/res_company.xml',
         'views/res_partner.xml',
     ],
     'qweb': ['static/src/xml/twilio_base.xml'],

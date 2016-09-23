@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="base.view_partner_form" />
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="%(action_home_page)d" type="action" class="oe_stat_button"
+                <button name="notify_by_sms" type="object" class="oe_stat_button"
                     icon="fa-phone" string="Ligar">
                 </button>
             </xpath>
