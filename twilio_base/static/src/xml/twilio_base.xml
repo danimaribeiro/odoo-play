@@ -9,10 +9,10 @@
         </t>
         <t t-jquery=".o_notification_content" t-operation="append">
             <br/><br/>
-            <button type="button" class="btn btn-success link2showed">
+            <button type="button" class="btn btn-success link2answer">
                 <i class="fa fa-phone"></i> Atender
             </button>
-            <button type="button" class="btn btn-danger link2event pull-right">Rejeitar</button>
+            <button type="button" class="btn btn-danger link2reject pull-right">Rejeitar</button>
         </t>
     </t>
 

@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <group position="inside">
                 <group name="twilio" string="Twilio">
+                    <field name="url_base" />
                     <field name="twilio_account_sid" />
                     <field name="twilio_auth_token" />
                     <field name="twilio_number" />

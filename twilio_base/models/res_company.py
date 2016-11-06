@@ -13,3 +13,4 @@ class ResCompany(models.Model):
     twilio_auth_token = fields.Char(string="Token Twilio")
     twilio_number = fields.Char(string="Twilio Número")
     twiml_application = fields.Char(string="Id Aplicação Twiml")
+    url_base = fields.Char(string="Url Base")

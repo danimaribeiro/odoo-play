@@ -7,53 +7,74 @@ from odoo.http import request
 from twilio import twiml
 from twilio.util import TwilioCapability
 
-TWILIO_ACCOUNT_SID = 'AC28b3af7006b1c34c483fd3660736a614'
-TWILIO_AUTH_TOKEN = 'e2813de3989ecfdc64b37194a2ac1dca'
-TWILIO_NUMBER = '+554840420303'
-TWIML_APPLICATION_SID = 'AP319ae6c0e61a11b8dd9199ca56790dbb'
-
 
 class TokenTwilio(http.Controller):
 
-    @http.route('/twilio/agent', type='http', auth="public",
+    @http.route('/twilio/call-ended', type='http', auth="public",
                 cors="*", csrf=False)
-    def dial_agent(self, **post):
-        print post
+    def call_ended(self, **post):
+        request.env['phone.call'].sudo().update_call_status(**post)
+
+    @http.route('/twilio/on-hold', type='http', auth="public",
+                cors="*", csrf=False)
+    def call_in_hold(self, **post):
+        request.env['phone.call'].sudo().update_call_status(**post)
+
         response = twiml.Response()
-        with response.dial(callerId=TWILIO_NUMBER) as dial:
-            dial.client('support_agent')
+        if post["Direction"] == 'inbound' and \
+           post["CallStatus"] == 'in-progress':
+            if int(post['QueueTime']) > 60:
+                response.hangup()
+                return str(response)
+        response.play("http://com.twilio.sounds.music.s3.amazonaws.com/" +
+                      "MARKOVICHAMP-Borghestral.mp3")
         return str(response)
+
+    @http.route('/twilio/call-connected', type='http', auth="public",
+                cors="*", csrf=False)
+    def call_connected(self, **post):
+        resp = twiml.Response()
+        resp.say(u"Você será atendido agora", voice="alice", language="pt-BR")
+        return str(resp)
 
     @http.route('/twilio/response', type='http', auth="public",
                 cors="*", csrf=False)
-    def dial_customer(self, **post):
-        print post
-        musica = 'http://demo.twilio.com/hellomonkey/monkey.mp3'
+    def receive_call(self, **post):
+        url_base = request.env.user.company_id.url_base
+        twilio_number = request.env.user.company_id.twilio_number
 
-        response = twiml.Response()
+        request.env['phone.call'].sudo().register_new_call(**post)
+        resp = twiml.Response()
 
-        if post["Direction"] == 'inbound' and post["CallStatus"] == 'ringing':
-            response.enqueue('Fila', waitUrl='http://0e0fe08c.ngrok.io/twilio/response')
-            return str(response)
-        if post["Direction"] == 'inbound' and post["CallStatus"] == 'in-progress':
-            if int(post['QueueTime']) > 10:
+        if "client" not in post["From"]:
+            resp.say("Estamos transferindo sua chamada, por favor aguarde",
+                     voice="alice", language="pt-BR")
+            resp.enqueue('trustcode',
+                         waitUrl='http://%s/twilio/on-hold' % url_base)
+            return str(resp)
 
-                response.redirect(url='http://0e0fe08c.ngrok.io/twilio/agent')
-                return str(response)
+        else:
+            if post["To"] != 'queue':
+                with resp.dial(callerId=twilio_number) as dial:
+                    dial.number(post['To'])
+                return str(resp)
+            else:
+                with resp.dial(callerId=twilio_number) as dial:
+                    dial.queue(
+                        'trustcode',
+                        url="http://%s/twilio/call-connected" % url_base)
+                return str(resp)
 
-            response.play(url=musica)
-            return str(response)
-
-        with response.dial(callerId=TWILIO_NUMBER) as dial:
-            dial.number(post['To'])
-        return str(response)
-
-    @http.route('/twilio/token', type='json', auth="public", cors="*")
+    @http.route('/twilio/token', type='json')
     def generate_token(self):
-        capability = TwilioCapability(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        sid_account = request.env.user.company_id.twilio_account_sid
+        token_account = request.env.user.company_id.twilio_auth_token
+        sid_twiml = request.env.user.company_id.twiml_application
+
+        capability = TwilioCapability(sid_account, token_account)
 
         # Allow our users to make outgoing calls with Twilio Client
-        capability.allow_client_outgoing(TWIML_APPLICATION_SID)
+        capability.allow_client_outgoing(sid_twiml)
         capability.allow_client_incoming('support_agent')
 
         # Generate the capability token

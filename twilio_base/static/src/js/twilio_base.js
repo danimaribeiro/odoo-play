@@ -23,24 +23,25 @@ var TwilioCallNotification = Notification.extend({
         this.callId = callId;
 
         this.events = _.extend(this.events || {}, {
-            'click .link2event': function() {
+            'click .link2answer': function() {
                 var self = this;
-
-                this.rpc("/web/action/load", {
-                    action_id: "calendar.action_calendar_event_notify",
-                }).then(function(r) {
-                    r.res_id = self.callId;
-                    return self.do_action(r);
+                session.rpc("/twilio/token", {}).then(function (data) {
+                    Twilio.Device.setup(data);
+                    Twilio.Device.ready(function (device) {
+                        var params = {
+                            To: 'queue'
+                        };
+                        Twilio.Device.connect(params);
+                        self.destroy(true);
+                    });
+                    Twilio.Device.incoming(function(connection) {
+                        connection.accept();
+                    });
                 });
             },
 
-            'click .link2recall': function() {
+            'click .link2reject': function() {
                 this.destroy(true);
-            },
-
-            'click .link2showed': function() {
-                this.destroy(true);
-                this.rpc("/calendar/notify_ack");
             },
         });
     },

@@ -2,7 +2,7 @@
 <odoo>
     <template id="assets_backend" name="trust_base assets" inherit_id="web.assets_backend">
         <xpath expr="." position="inside">
-            <script type="text/javascript" src="http://media.twiliocdn.com/sdk/js/client/v1.3/twilio.min.js"></script>
+            <script type="text/javascript" src="/twilio_base/static/src/js/twilio.js" />
             <script type="text/javascript" src="/twilio_base/static/src/js/twilio_base.js"/>
             <link rel="stylesheet" href="/twilio_base/static/src/css/twilio.css"/>
         </xpath>
@@ -15,5 +15,33 @@
 
     <menuitem id="home_page_petstore_menu" parent="sales_team.menu_sale_config"
           name="Discar" action="action_home_page"/>
+
+    <record id="action_inbound_phone_calls" model="ir.actions.act_window">
+        <field name="name">Inbound Calls</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">phone.call</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','in')]</field>
+    </record>
+
+    <record id="action_outbound_phone_calls" model="ir.actions.act_window">
+        <field name="name">Outbound Calls</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">phone.call</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type','=','out')]</field>
+    </record>
+
+    <menuitem name="Phone Calls"
+        id="menu_phone_calls" parent="sales_team.menu_base_partner"
+        sequence="6"/>
+    <menuitem action="action_inbound_phone_calls"
+        id="menu_inbound_phone_calls" parent="menu_phone_calls"
+        sequence="2"/>
+    <menuitem action="action_outbound_phone_calls"
+        id="menu_outbound_phone_calls" parent="menu_phone_calls"
+        sequence="4"/>
 
 </odoo>

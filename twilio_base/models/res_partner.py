@@ -21,10 +21,3 @@ class ResPartner(models.Model):
                 body=message,
                 to=(partner.mobile or partner.phone),
                 from_=self.env.user.company_id.twilio_number)
-
-    @api.multi
-    def write(self, vals):
-        self.env.user.notify_twilio_call(
-            'Recebendo chamada de Danimar Ribeiro (+55 (48) 9801-6226)',
-            sticky=True)
-        return super(ResPartner, self).write(vals)
