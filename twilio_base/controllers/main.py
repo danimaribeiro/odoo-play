@@ -59,7 +59,8 @@ class TokenTwilio(http.Controller):
                     dial.number(post['To'])
                 return str(resp)
             else:
-                with resp.dial(callerId=twilio_number) as dial:
+                with resp.dial(callerId=twilio_number,
+                               record='record-from-answer') as dial:
                     dial.queue(
                         'trustcode',
                         url="http://%s/twilio/call-connected" % url_base)

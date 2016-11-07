@@ -16,6 +16,23 @@
     <menuitem id="home_page_petstore_menu" parent="sales_team.menu_sale_config"
           name="Discar" action="action_home_page"/>
 
+    <record id="view_phone_calls_tree" model="ir.ui.view">
+      <field name="name">twilio.phone.calls.tree</field>
+      <field name="model">phone.call</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml" >
+          <tree>
+              <field name="state" />
+              <field name="from_number"/>
+              <field name="to_number"/>
+              <field name="caller_city"/>
+              <field name="caller_state"/>
+              <field name="duration" />
+              <field name="partner_id" />
+          </tree>
+      </field>
+    </record>
+
     <record id="action_inbound_phone_calls" model="ir.actions.act_window">
         <field name="name">Inbound Calls</field>
         <field name="type">ir.actions.act_window</field>

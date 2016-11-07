@@ -27,15 +27,15 @@ var TwilioCallNotification = Notification.extend({
                 var self = this;
                 session.rpc("/twilio/token", {}).then(function (data) {
                     Twilio.Device.setup(data);
+                    Twilio.Device.incoming(function(connection) {
+                        connection.accept();
+                    });
                     Twilio.Device.ready(function (device) {
                         var params = {
                             To: 'queue'
                         };
                         Twilio.Device.connect(params);
                         self.destroy(true);
-                    });
-                    Twilio.Device.incoming(function(connection) {
-                        connection.accept();
                     });
                 });
             },
@@ -87,11 +87,7 @@ WebClient.include({
         start: function() {
             session.rpc("/twilio/token", {}).then(function (data) {
                 Twilio.Device.setup(data);
-                Twilio.Device.ready(function (device) {
-                    alert('twilio pronto');
-                });
                 Twilio.Device.incoming(function(connection) {
-                    alert('Recebendo chamada');
                     connection.accept();
                 });
             });

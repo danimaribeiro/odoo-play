@@ -34,6 +34,8 @@ class PhoneCall(models.Model):
                              string="Situação")
 
     def register_new_call(self, **data):
+        if data["To"] == "queue":
+            return
         call = self.search([('identifier', '=', data["CallSid"])])
         if not call:
             call = self.create({
@@ -57,7 +59,7 @@ class PhoneCall(models.Model):
 
     def update_call_status(self, **data):
         call = self.search([('identifier', '=', data["CallSid"])])
-        if data["CallStatus"] == 'completed':
+        if call and data["CallStatus"] == 'completed':
             call.write({
                 'state': 'finished',
                 'duration': int(data["CallDuration"])
