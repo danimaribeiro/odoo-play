@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend" name="trust_base assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" href="/odoo_pilot/static/src/css/pilot.css"/>
+            <script type="text/javascript" src="/odoo_pilot/static/src/js/pilot.js" />
+        </xpath>
+    </template>
+
+    <record id="view_pilot_instance_form" model="ir.ui.view">
+      <field name="name">view.pilot.server.form</field>
+      <field name="model">pilot.instance</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+          <form>
+              <group>
+                  <field name="server_id" invisible="1" />
+                  <field name="name" />
+                  <field name="port_to_run" />
+                  <field name="domain_ids" widget="many2many_tags"/>
+              </group>
+          </form>
+      </field>
+    </record>
+
+    <record id="view_pilot_server_form" model="ir.ui.view">
+      <field name="name">view.pilot.server.form</field>
+      <field name="model">pilot.server</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml" >
+          <form>
+              <group>
+                  <field name="name" />
+                  <field name="root_password" />
+                  <field name="partner_id"/>
+                  <button name="action_install_odoo" type="object" string="Instalar" />
+              </group>
+              <group string="Instâncias">
+                  <field name="instance_ids" nolabel="1">
+                      <tree editable="bottom">
+                          <field name="name" />
+                          <field name="port_to_run" />
+                          <field name="domain_ids" widget="many2many_tags" />
+                      </tree>
+                  </field>
+              </group>
+          </form>
+      </field>
+    </record>
+
+    <record id="view_pilot_server_tree" model="ir.ui.view">
+      <field name="name">view.pilot.server.tree</field>
+      <field name="model">pilot.server</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml" >
+          <tree>
+              <field name="name" />
+              <field name="partner_id"/>
+          </tree>
+      </field>
+    </record>
+
+    <record id="action_pilot_servers" model="ir.actions.act_window">
+        <field name="name">Servidores</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pilot.server</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Odoo Pilot"
+        id="menu_odoo_pilot" parent="website.menu_website_configuration"
+        sequence="6"/>
+    <menuitem action="action_pilot_servers"
+        id="menu_pilot_servers" parent="menu_odoo_pilot"
+        sequence="2"/>
+
+</odoo>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home_menu_sale" name="Portal layout : sales menu entries" inherit_id="website_portal.portal_layout" priority="35">
+        <xpath expr="//ul[contains(@class,'o_portal_submenu')]" position="inside">
+            <li>
+                <a href="/my/servers">Meus Servidores</a>
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_sale" name="Portal My Home : sales entries" inherit_id="website_portal.portal_my_home" priority="25">
+        <xpath expr="//div[contains(@class,'o_my_home_content')]" position="inside">
+            <h3 class="page-header">
+                <a href="/my/servers">Seus Servidores
+                    <small class="ml8">
+                        <t t-if="server_count">
+                            <span class='badge'><t t-esc="server_count"/></span>
+                        </t>
+                        <t t-if="not server_count">
+                            Não há servidores configurados na sua conta.
+                        </t>
+                    </small>
+                </a>
+            </h3>
+        </xpath>
+    </template>
+
+    <template id="portal_my_server" name="Meu Portal - Servidores">
+        <t t-call="website_portal.portal_layout">
+            <h3 class="page-header">Seus Servidores</h3>
+            <t t-if="not servers">
+                <p>Não tem nenhum servidor configurado.</p>
+            </t>
+            <t t-if="servers">
+                <table class="table table-hover o_my_status_table">
+                    <thead>
+                      <tr class="active">
+                          <th>Endereço IP</th>
+                          <th>Servidor #</th>
+                      </tr>
+                    </thead>
+                    <t t-foreach="servers" t-as="server">
+                        <tr>
+                            <td><span t-field="server.name"/></td>
+                            <td>
+                                <a t-attf-href="/my/server/{{server.id}}?{{keep_query()}}"><t t-esc="server.id"/></a>
+                            </td>
+                        </tr>
+                    </t>
+                </table>
+                <div t-if="pager" class="o_portal_pager text-center">
+                  <t t-call="website.pager"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="portal_server_edit" name="Meu Portal - Editar Servidor">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <div class="oe_structure">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <ol class="breadcrumb mt8">
+                                    <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                    <li>
+                                      <a t-attf-href="/my/servers?{{ keep_query()}}">
+                                        Meus Servidores
+                                      </a>
+                                    </li>
+                                    <t t-if="server">
+                                        <li>
+                                            Servidor
+                                            <t t-esc="server.id"/>
+                                        </li>
+                                    </t>
+                                    <t t-if="not server">
+                                        <li>
+                                            Novo Servidor
+                                        </li>
+                                    </t>
+                                </ol>
+                            </div>
+                        </div>
+                        <h3 class="page-header">Editar</h3>
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <form action="/my/servers/new" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <div class="col-md-12">
+                                        <div t-if="error_message" class="alert alert-danger">
+                                            <t t-foreach="error_message" t-as="err"><t t-esc="err"/><br/></t>
+                                        </div>
+                                    </div>
+                                    <div t-attf-class="form-group #{error.get('ip_address') and 'has-error' or ''} col-md-6 div_name">
+                                        <label class="control-label" for="name">Endereço IP</label>
+                                        <input type="text" name="ip_address" class="form-control" t-att-value="server and server.name" />
+                                    </div>
+                                    <div t-attf-class="form-group #{error.get('email') and 'has-error' or ''} col-md-6" id="div_email">
+                                        <label class="control-label" for="root_password">Senha Root Servidor</label>
+                                        <input type="text" name="root_password" class="form-control"
+                                            t-att-value="server and server.root_password"/>
+                                    </div>
+                                    <div class="clearfix"/>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-default btn-primary mb32 a-submit">
+                                            <span>Salvar </span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <t t-if="server">
+                                <div class="col-md-4">
+                                    <div class="list-group">
+                                      <a href="#" class="list-group-item">
+                                          <button class="btn btn-success" style="width:100%;">Instalar</button>
+                                      </a>
+                                      <a href="#" class="list-group-item">
+                                          <button class="btn btn-info" style="width:100%;">Novo dominio</button>
+                                      </a>
+                                      <a href="#" class="list-group-item">
+                                          <button class="btn btn-warning" style="width:100%;">Nova Instância</button>
+                                      </a>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="portal_server_view" name="Meu Portal - Ver Servidor">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <div class="oe_structure">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <ol class="breadcrumb mt8">
+                                    <li><a href="/my/home"><i class="fa fa-home"/></a></li>
+                                    <li>
+                                      <a t-attf-href="/my/servers?{{ keep_query()}}">
+                                        Meus Servidores
+                                      </a>
+                                    </li>
+                                    <li>
+                                        Servidor
+                                        <t t-esc="server.id"/>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                        <h3 class="page-header">Manutenção</h3>
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="control-label" for="name">Endereço IP</label><br />
+                                        <span class="label label-info" t-field="server and server.name"></span>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="control-label" for="root_password">Senha Root Servidor</label><br />
+                                        <span class="label label-info">*************</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h4 class="page-header">Instâncias do Odoo em execução</h4>
+                                    <table class="table table-hover table-bordered table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Nome</th>
+                                                <th>Porta em execução</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="server.instance_ids" t-as="instance">
+                                                <tr>
+                                                    <td><span t-field="instance.name"></span></td>
+                                                    <td><span t-field="instance.port_to_run"></span></td>
+                                                    <th>
+                                                        <button class="btn btn-success btn-xs">Atualizar</button>
+                                                        <span class="btn btn-warning btn-xs">Parar</span>
+                                                        <span class="btn btn-danger btn-xs">Deletar</span>
+                                                    </th>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="list-group">
+                                  <a href="#" class="list-group-item">
+                                      <button class="btn btn-success" style="width:100%;">Instalar</button>
+                                  </a>
+                                  <a href="#" class="list-group-item">
+                                      <button class="btn btn-info" style="width:100%;">Novo dominio</button>
+                                  </a>
+                                  <a href="#" class="list-group-item">
+                                      <button class="btn btn-warning" style="width:100%;">Nova Instância</button>
+                                  </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

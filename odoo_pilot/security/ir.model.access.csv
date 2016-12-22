@@ -1,0 +1,4 @@
+"id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
+access_pilot_server,access_pilot_server,model_pilot_server,,1,0,0,0
+access_pilot_domain,access_pilot_domain,model_pilot_domain,,1,0,0,0
+access_pilot_instance,access_pilot_instance,model_pilot_instance,,1,0,0,0
